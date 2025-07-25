@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	"fmt"
 	"io"
 	"net/http"
 	"talkBuster/models"
@@ -23,6 +24,12 @@ func CreateStoryHandler(w http.ResponseWriter, r *http.Request) {
 	err = json.Unmarshal(body, &story)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	validLanguage := services.LanguageValidation(story.Language)
+	if !validLanguage {
+		http.Error(w, fmt.Sprintf("Language %s is not valid", story.Language), http.StatusBadRequest)
 		return
 	}
 
